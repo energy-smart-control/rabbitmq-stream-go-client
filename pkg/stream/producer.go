@@ -343,6 +343,8 @@ func (producer *Producer) sendBytes(streamMessage message.StreamMessage, message
 	producer.addUnConfirmed(sequence, streamMessage, producer.id)
 
 	if producer.getStatus() == open {
+		logs.LogInfo(fmt.Sprintf("stream debug: sending stream message (%d)", sequence))
+
 		producer.messageSequenceCh <- messageSequence{
 			messageBytes:     messageBytes,
 			unCompressedSize: len(messageBytes),
@@ -358,7 +360,6 @@ func (producer *Producer) sendBytes(streamMessage message.StreamMessage, message
 }
 
 func (producer *Producer) Send(streamMessage message.StreamMessage) error {
-	logs.LogInfo("stream debug: sending message")
 	messageBytes, err := streamMessage.MarshalBinary()
 	if err != nil {
 		return err
