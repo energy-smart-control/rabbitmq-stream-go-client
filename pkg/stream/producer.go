@@ -247,6 +247,7 @@ func (producer *Producer) getStatus() int {
 func (producer *Producer) sendBufferedMessages() {
 
 	if len(producer.pendingMessages.messages) > 0 {
+		logs.LogInfo(fmt.Sprintf("stream debug: sending %d pending messages", len(producer.pendingMessages.messages)))
 		err := producer.internalBatchSend(producer.pendingMessages.messages)
 		if err != nil {
 			return
@@ -310,6 +311,7 @@ func (producer *Producer) startPublishTask() {
 					}
 
 					producer.pendingMessages.size += msg.unCompressedSize
+					logs.LogInfo("stream debug: adding message to pending")
 					producer.pendingMessages.messages = append(producer.pendingMessages.messages, msg)
 					if len(producer.pendingMessages.messages) >= (producer.options.BatchSize) {
 						producer.sendBufferedMessages()
@@ -356,6 +358,7 @@ func (producer *Producer) sendBytes(streamMessage message.StreamMessage, message
 }
 
 func (producer *Producer) Send(streamMessage message.StreamMessage) error {
+	logs.LogInfo("stream debug: sending message")
 	messageBytes, err := streamMessage.MarshalBinary()
 	if err != nil {
 		return err
